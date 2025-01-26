@@ -6,4 +6,5 @@ int main(void)
     printf("hello again\n");
     printf("hello again x2\n");
     printf("test");
+    printf("again");
 }
