@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+
+
+{% block title %}
+    Transaction
+{% endblock %}
+
+{% block main %}
+
+    <h1>Your cash: {{ cash }} đ</h1>
+    
+    <h1>transaction</h1>
+
+    <div id="time_range">
+        <div>
+            <h2>Time range</h2>
+        </div>
+        <div>
+            <form action="/transactions" method="post">
+                <span>start day</span>
+                <input type="date" name="start_date" placeholder="Start date">
+                <span>end day</span>
+                <input type="date" name="end_date" placeholder="End date">
+                <button type="submit" name="time_range">Filter</button>
+            </form>
+        </div>
+        <!-- 2 buuton send to post set your time range -->
+    </div>
+
+
+    <h2><span>your cost: </span><span>{{ sum_transactions }}</span></h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Amount</th>
+                <th>Category</th>
+                <th>Date</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in transactions %}
+            <tr>
+                <td>{{ transaction.amount }}</td>
+                <td>{{ transaction.catalogies }}</td>
+                <td>{{ transaction.date }}</td>
+                <td>{{ transaction.description }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+
+    <h1><span>your income: </span><span>{{ sum_income }}</span></h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Amount</th>
+                <th>Category</th>
+                <th>Date</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for income in incomes %}
+            <tr>
+                <td>{{ income.amount }}</td>
+                <td>{{ income.catalogies }}</td>
+                <td>{{ income.date }}</td>
+                <td>{{ income.description }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
