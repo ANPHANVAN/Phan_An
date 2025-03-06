@@ -18,6 +18,10 @@ Session(app)
 # Configure CS50 Library to use SQLite database
 db = SQL("sqlite:///expensive_app.db")
 
+def take_cash():
+    cash = db.execute("SELECT cash FROM users WHERE id = ?", session["user_id"])[0]["cash"]
+    return cash
+
 @app.after_request
 def after_request(response):
     """Ensure responses aren't cached"""
@@ -27,47 +31,164 @@ def after_request(response):
     return response
 
 # HOME PAGE
-@app.route("/")
+@app.route("/", methods=["GET", "POST"]) 
 @login_required
 def index():
-    # take cash balance
-    cash = take_cash()
+    if request.method == "POST":
+        if "range_spending" in request.form:
+            range_spending = request.form.get("range_spending")
+            print(f"this is a range_spending:{range_spending}")
 
-    #take data and add column day, week, month, year
+            cash = take_cash()
+            #take data and add column day, week, month, year
+            df = create_df_time()
+
+            # divide data into 2 parts: expense and income
+            df_expense = df[df["amount"] < 0].copy()
+            df_income = df[df["amount"] > 0].copy()
+            # number of expense
+            sum_expense = df_expense["amount"].sum()
+
+            # number of salary
+            sum_salary = df_income["amount"].sum()
+
+            # transform data expense into json
+            df_expense = df_expense[["amount", "date"]]
+            df_expense_group = df_expense.groupby("date")["amount"].sum().reset_index()
+            df_expense_group["amount"] = - df_expense_group["amount"]
+            df_expense_group = df_expense_group.to_json(orient="records")
+
+            # transform data income into json
+            df_income = df_income[["amount", "date"]]
+            df_income_group = df_income.groupby("date")["amount"].sum().reset_index()
+            df_income_group = df_income_group.to_json(orient="records")
+
+            # take file jsion expense group from df
+            df_json_expense_group = groupExpense(df,range_time=range_spending)
+            # create a table expenses sort with month/week
+            return render_template("home.html", cash=cash, sum_expense=sum_expense, sum_salary=sum_salary, data = df_expense_group, data_salary = df_income_group, df_json_expense_group=df_json_expense_group, range_spending=range_spending)
+        else:
+            return apology("error")
+        
+    else:
+        # take cash balance
+        cash = take_cash()
+
+        #take data and add column day, week, month, year
+        try:
+            df = create_df_time()
+        except:
+            return apology("you need add a transactions")
+
+        # divide data into 2 parts: expense and income
+        df_expense = df[df["amount"] < 0].copy()
+        df_income = df[df["amount"] > 0].copy()
+
+        # number of expense
+        sum_expense = df_expense["amount"].sum()
+
+        # number of salary
+        sum_salary = df_income["amount"].sum()
+
+        # transform data expense into json
+        df_expense = df_expense[["amount", "date"]]
+        df_expense_group = df_expense.groupby("date")["amount"].sum().reset_index()
+        df_expense_group["amount"] = - df_expense_group["amount"]
+        df_expense_group = df_expense_group.to_json(orient="records")
+
+        # transform data income into json
+        df_income = df_income[["amount", "date"]]
+        df_income_group = df_income.groupby("date")["amount"].sum().reset_index()
+        df_income_group = df_income_group.to_json(orient="records")
+
+        # take file jsion expense group from df
+        df_json_expense_group = groupExpense(df)
+        # create a table expenses sort with month/week
+        return render_template("home.html", cash=cash, sum_expense=sum_expense, sum_salary=sum_salary, data = df_expense_group, data_salary = df_income_group, df_json_expense_group=df_json_expense_group)
+
+
+def create_df_time():
     data_group_expense = db.execute("SELECT * from transactions WHERE user_id = ?", session["user_id"])
     df = pd.DataFrame(data_group_expense)
     df["day"] = pd.to_datetime(df["date"], errors='coerce').dt.to_period("D")
     df["week"] = pd.to_datetime(df["date"], errors='coerce').dt.to_period("W")
     df["month"] = pd.to_datetime(df["date"], errors='coerce').dt.to_period("M")
     df["year"] = pd.to_datetime(df["date"], errors='coerce').dt.to_period("Y")
+    return df
 
-    # divide data into 2 parts: expense and income
-    df_expense = df[df["amount"] < 0].copy()
-    df_income = df[df["amount"] > 0].copy()
-
-    # number of expense
-    sum_expense = df_expense["amount"].sum()
-
-    # number of salary
-    sum_salary = df_income["amount"].sum()
-
-    # transform data expense into json
-    df_expense = df_expense[["amount", "date"]]
-    df_expense_group = df_expense.groupby("date")["amount"].sum().reset_index()
-    df_expense_group["amount"] = - df_expense_group["amount"]
-    df_expense_group = df_expense_group.to_json(orient="records")
-
-    # transform data income into json
-    df_income = df_income[["amount", "date"]]
-    df_income_group = df_income.groupby("date")["amount"].sum().reset_index()
-    df_income_group = df_income_group.to_json(orient="records")
-
-    df_json_expense_group = groupExpense(df)
-    # create a table expenses sort with month/week
-    return render_template("home.html", cash=cash, sum_expense=sum_expense, sum_salary=sum_salary, data = df_expense_group, data_salary = df_income_group, df_json_expense_group=df_json_expense_group)
-def take_cash():
+@app.route("/filter", methods=["POST", "GET"])
+@login_required
+def filter():
     cash = db.execute("SELECT cash FROM users WHERE id = ?", session["user_id"])[0]["cash"]
-    return cash
+    df = db.execute("SELECT * FROM transactions WHERE user_id = ?", session["user_id"])
+    if not df:
+        return apology("you need add a transaction")
+    df = pd.DataFrame(df)
+    df["date"] = pd.to_datetime(df["date"])
+
+    session.setdefault('sort_expense', None)
+    session.setdefault('sort_income', None)
+    session.setdefault('desc_expense', None)
+    session.setdefault('desc_income', None)
+    session.setdefault('range_top_expense', None)
+    session.setdefault('range_top_income', None)
+
+    if request.method == "POST":
+        if "filter_income" in request.form:
+            session['sort_income'] = request.form.get("sort")
+            session['desc_income'] = bool(request.form.get("desc")=="1")
+            session['range_top_income'] = request.form.get("range_top")
+        
+        if "filter" in request.form:
+            session['sort_expense'] = request.form.get("sort")
+            session['desc_expense'] = bool(request.form.get("desc")=="1")
+            session['range_top_expense'] = request.form.get("range_top")
+          
+        # filter by date
+        df_filter_expense=filter_df_by_range(df, session["range_top_expense"])
+        df_expense = df_filter_expense[df["amount"] < 0]
+        # sort by sort and desc
+        try:   
+            df_expense = df_expense.sort_values(by=session["sort_expense"], ascending=session["desc_expense"])
+        except:
+            df_expense = df_expense
+        df_expense_dict = df_expense.to_dict('records')  
+
+        #income
+        df_filter_income=filter_df_by_range(df, session["range_top_income"])        
+        df_income = df_filter_income[df["amount"] > 0]
+        # sort by sort and desc
+        try:
+            df_income = df_income.sort_values(by=session["sort_income"], ascending=session["desc_income"])
+        except:
+            df_income = df_income
+        df_income_dict = df_income.to_dict('records')
+
+        return render_template("filter.html", cash=cash, df_income_dict=df_income_dict, df_expense_dict=df_expense_dict)
+    
+    else:
+        df_expense = df[df["amount"] < 0]
+        df_expense_dict = df_expense.to_dict('records')   
+
+        df_income = df[df["amount"] > 0]
+        df_income_dict = df_income.to_dict('records')  
+        return render_template("filter.html",cash=cash, df_income_dict=df_income_dict, df_expense_dict=df_expense_dict)
+    
+
+def filter_df_by_range(df, range_top="month"):
+    current_time = pd.Timestamp.now()
+    range_mapping = {
+        "day": pd.Timedelta(days=1),
+        'week': pd.Timedelta(weeks=1),
+        'month': pd.Timedelta(days=30),
+        'year': pd.Timedelta(days=365)
+    }
+
+    if range_top in range_mapping:
+        filtered_df = df[df["date"] > (current_time - range_mapping[range_top])]
+        return filtered_df
+    else:
+        return df
 
 
 @app.route("/transactions", methods=["GET", "POST"])
@@ -101,10 +222,10 @@ def adds():
             amount = - int(request.form.get("amount"))
             category = request.form.get("category")
             date = request.form.get("date")
-            note = request.form.get("note")
+            note = request.form.get("note", "None")
             db.execute("INSERT INTO transactions (user_id, catalogies, amount, date, description) VALUES(?, ?, ?, ?, ?)", session["user_id"], category, amount, date, note)
             db.execute("UPDATE users SET cash = cash + ? WHERE id = ?", amount, session["user_id"])
-            return redirect("/transactions")
+            return redirect("/adds")
         
         if "add_salary" in request.form:
             amount = request.form.get("amount")
@@ -113,11 +234,12 @@ def adds():
             note = request.form.get("note")
             db.execute("INSERT INTO transactions (user_id, catalogies, amount, date, description) VALUES(?, ?, ?, ?, ?)", session["user_id"], category, amount, date, note)
             db.execute("UPDATE users SET cash = cash + ? WHERE id = ?", amount, session["user_id"])
-            return redirect("/transactions")
+            return redirect("/adds")
     else:
+        cash = take_cash()
         category_differences = category_symbol()
         category_differences_salary = category_symbol_salary()
-        return render_template("adds.html", category_differences=category_differences, category_differences_salary=category_differences_salary)
+        return render_template("adds.html",cash=cash, category_differences=category_differences, category_differences_salary=category_differences_salary)
 
 @app.route("/settings", methods=["GET", "POST"])
 @login_required

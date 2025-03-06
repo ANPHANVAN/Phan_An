@@ -6,14 +6,19 @@
 {% endblock %}
 
 {% block main %}
+<div class="containerdiv">
+    <h1>Your cash: {{ cash }} $</h1>
+</div>
 
+<div class="containerdiv">
     <h1>Add transaction</h1>
-    <i class="fa-solid fa-wallet"></i>
-    <h2>Cash</h2>
+</div>
 
+<div class="containerdiv">
+    <h2>Add expensive</h2>
     <form action="/adds" method="post">
         <i class="fa-solid fa-money-bill-1"></i>
-        <input type="number" name="amount" placeholder="Amount" autofocus, min="0">
+        <input type="number" name="amount" placeholder="Amount ($)" autofocus, min="0">
         <select name="category" id="category">
             {% for category_difference in category_differences %}
             <option value="{{ category_difference.name }}">{{ category_difference.name }}</option>
@@ -23,15 +28,13 @@
         <input type="text" name="note" placeholder="Note">
         <button type="submit" name="add_cost">Add</button>
     </form>
+</div>
 
-    
-    <h1>Add income</h1>
-    <i class="fa-solid fa-sack-dollar"></i>
-    <h2>your transaction</h2>
-
+<div class="containerdiv">
+    <h2>Add income</h2>
     <form action="/adds" method="post">
         <i class="fa-solid fa-money-bill-1"></i>
-        <input type="number" name="amount" placeholder="Amount" autofocus, min="0">
+        <input type="number" name="amount" placeholder="Amount ($)" autofocus, min="0">
         <select name="category" id="category">
             {% for category in category_differences_salary %}
             <option value="{{ category.name }}">{{ category.name }}</option>
@@ -41,4 +44,6 @@
         <input type="text" name="note" placeholder="Note">
         <button type="submit" name="add_salary">Add</button>
     </form>
+</div>
+
 {% endblock %}

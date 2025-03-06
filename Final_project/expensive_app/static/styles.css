@@ -60,3 +60,75 @@ form select {
     padding: 6px;
     border-radius: 8px;
 }
+
+/* header */
+#containerHeader {
+    position: fixed;
+    top: 0;
+    width: 100vw;
+    box-shadow: 1px 1px 5px rgb(7, 7, 8);
+}
+
+#logOut {
+    margin: 0 1rem;
+}
+
+main {
+    margin: 0 2rem;
+}
+/* home */
+
+
+.containerdiv {
+    background: #dde2e4;
+    margin: 1rem auto;
+    border-radius: 1rem;
+    padding: 1rem;
+}
+
+
+button {
+    border-radius: 10px;
+    padding: 4px 10px;
+    margin: 1px;
+}
+
+button:hover {
+    background-color: #c0f0d3;
+}
+
+h3 {
+    font-size: 30px;
+    margin: 5px;
+}
+
+.input-container {
+    position: relative;
+    display: inline-block;
+    margin-right: 10px;
+    border: 1px solid black;
+    border-radius: 3px;
+  }
+
+  .input-container label {
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    background: white;
+    padding: 0 5px;
+    font-size: 12px;
+    color: rgb(26, 26, 27);
+    border: 1px solid black;
+    border-radius: 3px;
+  }
+
+  .input-container input {
+    width: 150px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+
+  #time_range_h2 {
+    margin-bottom:15px;
+  }
