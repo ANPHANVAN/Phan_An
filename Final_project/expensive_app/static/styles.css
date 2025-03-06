@@ -67,6 +67,7 @@ form select {
     top: 0;
     width: 100vw;
     box-shadow: 1px 1px 5px rgb(7, 7, 8);
+    z-index: 100;
 }
 
 #logOut {
