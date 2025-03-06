@@ -14,7 +14,7 @@
     <h2><span>Expensive: </span><span>{{ sum_transactions }}</span></h2>
 
     <form action="/filter" method="post">
-        <span>sort by</span>
+        <span class="display_phone">sort by</span>
         <select name="sort" id="sort">
             <option value="amount">Amount</option>
             <option value="catalogies">Category</option>
@@ -27,7 +27,7 @@
             <option value="0">Descending</option>
         </select>
 
-        <span>range time</span>
+        <span class="display_phone">range time</span>
         <select name="range_top" id="range_top" type="button">
             <option value="full">Full</option>
             <option value="day">Day</option>
@@ -64,7 +64,7 @@
     <h2><span>Income: </span><span>{{ sum_income }}</span></h2>
 
     <form action="/filter" method="post">
-        <span>sort by</span>
+        <span class="display_phone">sort by</span>
         <select name="sort" id="sort">
             <option value="amount">Amount</option>
             <option value="catalogies">Category</option>
@@ -77,7 +77,7 @@
             <option value="0">Descending</option>
         </select>
 
-        <span>range time</span>
+        <span class="display_phone">range time</span>
         <select name="range_top" id="range_top" type="button">
             <option value="full">Full</option>
             <option value="day">Day</option>

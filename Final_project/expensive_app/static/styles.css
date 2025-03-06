@@ -48,7 +48,7 @@ th, td {
 }
 
 th {
-    background-color: #f2f2f2; /* Màu nền cho header */
+    background-color: #c0baf7; /* Màu nền cho header */
 }
 
 .bold {
@@ -131,4 +131,24 @@ h3 {
 
   #time_range_h2 {
     margin-bottom:15px;
+  }
+
+  @media only screen and (max-width:1023px) {
+    
+  }
+
+  @media only screen and (max-width:1023px) and (min-width:767){
+    
+  }
+
+  @media only screen and (max-width:767px) {
+    table thead tr th, table tbody tr td {
+        font-size: 12px;
+    }
+    .navbar-brand span {
+        font-size:medium;
+    }
+    .display_phone {
+        display: none;
+    }
   }
