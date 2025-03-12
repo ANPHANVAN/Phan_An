@@ -64,4 +64,3 @@ order("Bugger", 10000)
   .finally(()=>{
     return console.log("finish or cancer the orders😎😋😋")
   })
-
