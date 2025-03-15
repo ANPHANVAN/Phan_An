@@ -90,34 +90,14 @@
       "finish": 400
     },
     {
-      "id": "0d56",
-      "course": "1",
-      "description": "1"
+      "id": "3920",
+      "course": "F8 CSS, HTML, Javascript",
+      "description": "this is F8 fontend javascript for beginner from a to z"
     },
     {
-      "id": "e3fc",
-      "course": "12",
-      "description": "12"
-    },
-    {
-      "id": "3a53",
-      "course": "45538",
-      "description": "43219"
-    },
-    {
-      "id": "14d5",
-      "course": "112223",
-      "description": "13314"
-    },
-    {
-      "id": "65a2",
-      "course": "1234",
-      "description": "1234"
-    },
-    {
-      "id": "9920",
-      "course": "1234",
-      "description": "1234"
+      "id": "e6ae",
+      "course": "F8 CSS, HTML, Javascript",
+      "description": "this is F8 fontend javascript for beginner from a to z"
     }
   ]
 }

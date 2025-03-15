@@ -13,10 +13,10 @@ function renderCourse(courses) {
     let html = '';
     courses.forEach(course => {
         html += `
-        <li>
+        <li id = "id-${course.id}">
             <h2>${course.course}</h2>
             <p>${course.description}</p>
-            <button type="submit" id = "${course.id}">Delete Course</button>
+            <button type="submit" class="delete-submit" value = "${course.id}">Delete Course</button>
         </li>
         `
     });
@@ -45,24 +45,42 @@ function addCourse(event){
         .then((data) => getCourses(renderCourse))
         .catch((error) => console.error("Error:", error));
 
-    console.log("why it dont run")
 }
 
 
 // action source programmer
 function run(){
     getCourses(renderCourse);
-    document.addEventListener("DOMContentLoaded", function () {
-        document.getElementById("addCourse").addEventListener("submit", addCourse);
-    });
-    document.addEventListener("DOMContentLoaded", function () {
-        document.getElementById("courseContainer").addEventListener("submit", deleteCourse);
-    });
+
+    document.getElementById("addCourse").addEventListener("submit", addCourse);
+
+    document.getElementById("courseContainer").addEventListener("click", deleteCourse);
     
 }
 
-function deleteCourse(){
+function deleteCourse(event){
+    if(event.target.classList.contains("delete-submit")) {
+        event.preventDefault();
+        let valuesId = event.target.value;
+        fetch(`http://localhost:3000/courses/${valuesId}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(response=>response.json())
+            .then(()=>{
+                document.getElementById(`id-${valuesId}`).remove();
+            })
+            .catch(error => console.error("Error:", error));
+    }
 
+
+        
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    run();
+});
 
 run()
