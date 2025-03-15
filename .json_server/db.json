@@ -88,16 +88,6 @@
       "price": 3000000,
       "view": 8000,
       "finish": 400
-    },
-    {
-      "id": "3920",
-      "course": "F8 CSS, HTML, Javascript",
-      "description": "this is F8 fontend javascript for beginner from a to z"
-    },
-    {
-      "id": "e6ae",
-      "course": "F8 CSS, HTML, Javascript",
-      "description": "this is F8 fontend javascript for beginner from a to z"
     }
   ]
 }
