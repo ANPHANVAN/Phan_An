@@ -32,6 +32,8 @@ function getNames(arr) {
   })
 }
 
+
+
 //  action
 getComments()
   .then((comments)=>{
@@ -47,7 +49,6 @@ getComments()
   
     data.comments.forEach(comment => {
       let user = data.users.find(user => Number(user.id) === Number(comment.user_id));
-      console.log("User tìm được:", user);
   
       if (user) {
         html += `<li>${user.name}: ${comment.content}</li>`;
@@ -58,6 +59,21 @@ getComments()
   
     getul.innerHTML = html;
   });
+
+
+  //  Gọi API ngoài
+  // get API realtime
+function getAPI(){
+  fetch('https://jsonplaceholder.typicode.com/posts/1')
+    .then(response =>response.json())
+    .then(json => title = json)
+}
+let title = null;
+getAPI()
+
+setTimeout(() => {
+  console.log("Dữ liệu sau 2s:", title);
+}, 2000);
   
 
 
