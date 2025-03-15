@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="main.js"></script>
+    <title>f8 fetch REST API</title>
+</head>
+<body>
+    <h1>f8 fetch REST API</h1>
+    <ul class="courseContainer" id="courseContainer">
+
+    </ul>
+
+    <form id="addCourse" action="/f8/fetchAPI/f8-project/index.html">
+        <input id="course" type="text" autofocus = "off" placeholder="Course" name="course">
+        <input id="description" type="text" autofocus = "off" placeholder="Description" name="description">
+        <button type="submit">Add Course</button>
+    </form>
+    <style>
+        body{
+            background-color: rgb(20, 20, 36);
+        }
+        h1, ul, li {
+            color: aliceblue;
+        }
+    </style>
+</body>
+</html>
