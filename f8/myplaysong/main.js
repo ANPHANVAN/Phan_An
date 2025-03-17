@@ -31,16 +31,16 @@ const app = {
 //   songs is array name, singer, path, image
   songs: [
     {
-        name: "relax with me Remix",
-        singer: "Phan Van An",
-        path: "assets/mp3/song1.mp3",
-        image: "assets/img/song1"
+      name: "relax with me Remix",
+      singer: "Phan Van An",
+      path: "assets/mp3/song1.mp3",
+      image: "assets/img/song1.png"
     },
     {
-        name: "Happy day Remix",
-        singer: "Phan Van An",
-        path: "assets/mp3/song2.mp3",
-        image: "assets/img/song"
+      name: "Happy day Remix",
+      singer: "Phan Van An",
+      path: "assets/mp3/song2.mp3",
+      image: "assets/img/song2.png"
     },
     {
       name: "Click Pow Get Down",
@@ -300,10 +300,24 @@ const app = {
     let newIndex;
     do {
       newIndex = Math.floor(Math.random() * this.songs.length);
-    } while (newIndex === this.currentIndex);
+    } while ((newIndex === this.currentIndex)||(this.checkRamdomDulicate(newIndex)));
 
+    this.randomDuplicate.push(newIndex);
     this.currentIndex = newIndex;
     this.loadCurrentSong();
+    console.log(this.randomDuplicate)
+  },
+  randomDuplicate: [],
+  checkRamdomDulicate: function(newIndex){
+    // true if want random again
+    if (this.randomDuplicate.length == this.songs.length) {
+      this.randomDuplicate = [];
+      return false;
+    }
+    if (this.randomDuplicate.includes(newIndex)) {
+      return true;
+    }
+    else {return false}
   },
   start: function () {
     // Gán cấu hình từ config vào ứng dụng
