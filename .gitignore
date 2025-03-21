@@ -1,0 +1,6 @@
+.conda/
+.json_server/
+.vscode/
+*.venv/
+*__pycache__/
+
