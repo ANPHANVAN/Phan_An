@@ -18,23 +18,9 @@ app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'resource/views'));
 app.use(express.static(path.join(__dirname, 'public')))
 
-app.get('/', (req, res) => {
-  res.render('home');
-});
+const route = require(path.join(__dirname, 'routes'))
 
-app.get('/news', (req, res) => {
-  res.render('newspage');
-});
-
-app.get('/search', (req, res) => {
-
-  res.render('search');
-});
-
-app.post('/search', (req, res) => {
-  console.log(req.body)
-  res.render('search');
-});
+route(app);
 
 app.listen(port, () => {
   console.log(`Example app listening on port http://localhost:${port}`)
