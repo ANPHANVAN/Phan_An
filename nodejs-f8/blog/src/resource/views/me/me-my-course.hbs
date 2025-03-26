@@ -1,0 +1,110 @@
+<h1>My Course</h1>
+<a href="/me/bin">recycle bin</a>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Name</th>
+      <th scope="col">Description</th>
+      <th scope="col">createAt</th>
+      <th scope="col"></th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each courses}}
+    <tr>
+      <th scope="row">{{sum @index 1}}</th>
+      <td>{{this.name}}</td>
+      <td>{{this.description}}</td>
+      <td>{{this.createAt}}</td>
+      <td><a href="/me/{{this._id}}/edit">change</a></td>
+      <td>
+        <a 
+          id="{{this._id}}" 
+          class="delete-button" 
+          href="#" 
+          data-bs-toggle="modal" 
+          data-bs-target="#delete-course" 
+          data-id="{{this._id}}">delete</a>
+      </td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+
+<!-- Modal -->
+<div class="modal fade" id="delete-course" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Delete Course</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this course?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger" id="confirm-delete">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<form name="deleteCourse" method="POST" style="display: none;"></form>
+
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+  const modal = document.getElementById('delete-course');
+  const deleteButtons = document.querySelectorAll('.delete-button');
+  const confirmDeleteBtn = document.getElementById('confirm-delete');
+  let courseIdToDelete = null; // Biến để lưu _id của khóa học cần xóa
+
+  // Khi bấm nút "delete" để mở modal
+  deleteButtons.forEach(button => {
+    button.addEventListener('click', function (e) {
+      e.preventDefault(); // Ngăn hành vi mặc định của thẻ <a>
+      courseIdToDelete = this.getAttribute('data-id'); // Lấy _id từ data-id
+    });
+  });
+
+  // Khi modal được hiển thị
+  modal.addEventListener('shown.bs.modal', () => {
+    // Có thể focus vào nút Delete nếu cần
+    confirmDeleteBtn.focus();
+  });
+
+  // Khi bấm nút "Delete" trong modal
+  confirmDeleteBtn.addEventListener('click', function () {
+    if (courseIdToDelete) {
+      // Gửi DELETE request lên server
+      fetch(`/me/${courseIdToDelete}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+        .then(response => {
+          if (response.ok) {
+            console.log('Course deleted successfully');
+            // Đóng modal
+            const modalInstance = bootstrap.Modal.getInstance(modal);
+            modalInstance.hide();
+            // Tải lại trang hoặc cập nhật giao diện
+            location.reload(); // Cách đơn giản nhất, có thể thay bằng cập nhật DOM
+          } else {
+            console.error('Failed to delete course');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+  });
+});
+
+</script>

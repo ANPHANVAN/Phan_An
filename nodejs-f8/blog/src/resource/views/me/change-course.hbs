@@ -1,0 +1,9 @@
+<h1>change a course</h1>
+
+<form action="/me/{{course._id}}/change?_method=PUT" method="POST">
+    <input type="text" name="name" placeholder="Name" value="{{course.name}}">
+    <br>
+    <textarea name="description" id="description">{{course.description}}</textarea>
+    <br>
+    <button type="submit">Change</button>
+</form>
