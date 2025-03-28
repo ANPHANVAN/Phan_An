@@ -1,5 +1,7 @@
 <h1>Bin</h1>
-<a href="/me/bin">recycle bin</a>
+<a href="/me/my-course">Back to My course</a>
+
+<h3></h3>
 
 <table class="table">
   <thead>
@@ -19,7 +21,7 @@
       <td>{{this.name}}</td>
       <td>{{this.description}}</td>
       <td>{{this.createAt}}</td>
-      <td><a href="/me/{{this._id}}/edit">change</a></td>
+      <td><a id="{{ this._id }}" class="restoreButton" href="#">restore</a></td>
       <td>
         <a 
           id="{{this._id}}" 
@@ -27,7 +29,7 @@
           href="#" 
           data-bs-toggle="modal" 
           data-bs-target="#delete-course" 
-          data-id="{{this._id}}">delete</a>
+          data-id="{{this._id}}">delete permanent</a>
       </td>
     </tr>
     {{/each}}
@@ -47,19 +49,21 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-danger" id="confirm-delete">Delete</button>
+        <button type="button" class="btn btn-danger" id="confirm-delete">Delete Permanent</button>
       </div>
     </div>
   </div>
 </div>
 
 <form name="deleteCourse" method="POST" style="display: none;"></form>
+<form name="restoreCourse" method="POST" style="display: none;"></form>
 
 
 <script>
 
 document.addEventListener('DOMContentLoaded', function () {
   const modal = document.getElementById('delete-course');
+  const formDelete = document.forms.namedItem('deleteCourse');
   const deleteButtons = document.querySelectorAll('.delete-button');
   const confirmDeleteBtn = document.getElementById('confirm-delete');
   let courseIdToDelete = null; // Biến để lưu _id của khóa học cần xóa
@@ -82,29 +86,30 @@ document.addEventListener('DOMContentLoaded', function () {
   confirmDeleteBtn.addEventListener('click', function () {
     if (courseIdToDelete) {
       // Gửi DELETE request lên server
-      fetch(`/me/${courseIdToDelete}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-        .then(response => {
-          if (response.ok) {
-            console.log('Course deleted successfully');
-            // Đóng modal
-            const modalInstance = bootstrap.Modal.getInstance(modal);
-            modalInstance.hide();
-            // Tải lại trang hoặc cập nhật giao diện
-            location.reload(); // Cách đơn giản nhất, có thể thay bằng cập nhật DOM
-          } else {
-            console.error('Failed to delete course');
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-        });
+      formDelete.action = `/me/${courseIdToDelete}/permanent?_method=DELETE`;
+      formDelete.submit();
+      fetch('/me/bin')
     }
   });
 });
 
 </script>
+
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+  const restoreButtons = document.querySelectorAll('.restoreButton')
+  let restoreForm = document.forms.namedItem("restoreCourse")
+  restoreButtons.forEach(restoreButton => {
+    restoreButton.onclick = function (e) {
+      e.preventDefault()
+      const courseId = e.target.id
+      restoreForm.action = `/me/${courseId}/restore?_method=PATCH`
+      restoreForm.submit()
+    }
+  })
+})
+
+</script>
+

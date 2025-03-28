@@ -12,6 +12,7 @@ const port = 3000;
 db.connect()
 
 app.use(methodOverride('_method'))
+app.use(methodOverride('X-HTTP-Method-Override'));
 
 app.use(express.static(path.join(__dirname, "public")));
 // config connect DB
