@@ -1,40 +1,49 @@
 <h1>Bin</h1>
 <a href="/me/my-course">Back to My course</a>
 
-<h3></h3>
+<form name="submitFull" action="/me/delete-all" method="post">
 
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Name</th>
-      <th scope="col">Description</th>
-      <th scope="col">createAt</th>
-      <th scope="col"></th>
-      <th scope="col"></th>
-    </tr>
-  </thead>
-  <tbody>
-    {{#each courseDeletes}}
-    <tr>
-      <th scope="row">{{sum @index 1}}</th>
-      <td>{{this.name}}</td>
-      <td>{{this.description}}</td>
-      <td>{{this.createAt}}</td>
-      <td><a id="{{ this._id }}" class="restoreButton" href="#">restore</a></td>
-      <td>
-        <a 
-          id="{{this._id}}" 
-          class="delete-button" 
-          href="#" 
-          data-bs-toggle="modal" 
-          data-bs-target="#delete-course" 
-          data-id="{{this._id}}">delete permanent</a>
-      </td>
-    </tr>
-    {{/each}}
-  </tbody>
-</table>
+  <div class="form-check form-switch">
+    <input name="delete" class="form-check-input" type="checkbox" id="choseAll">
+    <button type="submit" disabled>Delete Permanent</button>
+
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col"></th>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Description</th>
+        <th scope="col">createAt</th>
+        <th scope="col" colspan="2"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each courseDeletes}}
+      <tr>
+        <td><input name="courseIds[]" value="{{this._id}}" class="form-check-input chose-one-row" type="checkbox"></td>
+        <th scope="row">{{sum @index 1}}</th>
+        <td>{{this.name}}</td>
+        <td>{{this.description}}</td>
+        <td>{{this.createAt}}</td>
+        <td><a id="{{ this._id }}" class="restoreButton" href="#">restore</a></td>
+        <td>
+          <a 
+            id="{{this._id}}" 
+            class="delete-button" 
+            href="#" 
+            data-bs-toggle="modal" 
+            data-bs-target="#delete-course" 
+            data-id="{{this._id}}">delete permanent</a>
+        </td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+
+</form>
+
 
 <!-- Modal -->
 <div class="modal fade" id="delete-course" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -98,18 +107,73 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <script>
 
-document.addEventListener('DOMContentLoaded', function () {
-  const restoreButtons = document.querySelectorAll('.restoreButton')
-  let restoreForm = document.forms.namedItem("restoreCourse")
-  restoreButtons.forEach(restoreButton => {
-    restoreButton.onclick = function (e) {
-      e.preventDefault()
-      const courseId = e.target.id
-      restoreForm.action = `/me/${courseId}/restore?_method=PATCH`
-      restoreForm.submit()
-    }
+
+  document.addEventListener('DOMContentLoaded', function () {
+
+      const restoreButtons = document.querySelectorAll('.restoreButton')
+      let restoreForm = document.forms.namedItem("restoreCourse")
+      restoreButtons.forEach(restoreButton => {
+        restoreButton.onclick = function (e) {
+          e.preventDefault()
+          const courseId = e.target.id
+          restoreForm.action = `/me/${courseId}/restore?_method=PATCH`
+          restoreForm.submit()
+        }
+      })
+
+
   })
-})
+
+
 
 </script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
 
+function checkSubmit(){
+    const choseOneRow = $('.chose-one-row');
+    if (choseOneRow.filter(':checked').length > 0) {
+      $('button[type="submit"]').attr('disabled', false);
+    } else {
+      $('button[type="submit"]').attr('disabled', true);
+    }
+}
+
+$(document).ready(function() {
+  const choseAll = $('#choseAll');
+  const choseOneRow = $('.chose-one-row');
+
+  choseAll.click(function() {
+      choseOneRow.prop('checked', $(this).is(':checked'));
+      checkSubmit()
+  });
+
+  choseOneRow.click(function() {
+    if (choseOneRow.length === choseOneRow.filter(':checked').length) {
+      choseAll.prop('checked', true);
+    } else {
+      choseAll.prop('checked', false);
+    }
+    checkSubmit()
+
+  });
+
+  $('form[name="submitFull"]').submit(function(e) {
+      e.preventDefault(); // Ngăn chặn hành vi mặc định của form
+      
+      // Đếm số checkbox được chọn
+      var checkedCount = choseOneRow.filter(':checked').length;
+      
+      if (checkedCount > 0) {
+          this.action = `/me/delete-all?_method=DELETE`
+          this.submit()
+      } else {
+          alert('Vui lòng chọn ít nhất một khóa học để xóa!');
+      }
+  });
+
+
+
+});
+
+</script>

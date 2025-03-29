@@ -95,5 +95,17 @@ class MeController {
       res.status(400).json({ error: 'error!' });
     }
   }
+
+  async deleteAll(req, res, next) {
+    try {
+      let courseIds = req.body.courseIds
+      Course.deleteMany({ _id: { $in: courseIds } })
+        .then(() => res.redirect('/me/my-course'))
+        .catch(next)
+
+    } catch (err) {
+      res.status(400).json({ error: 'error!' });
+    }
+  }
 }
 module.exports = new MeController();

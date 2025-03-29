@@ -7,6 +7,7 @@ const meController = require('../app/controllers/Me/MyCourseController');
 router.use('/my-course', meController.indexCourse);
 router.get('/bin', meController.bin)
 router.use('/:id/edit', meController.changeCourse)
+router.delete('/delete-all', meController.deleteAll)
 router.delete('/:id', meController.delete)
 router.delete('/:id/permanent', meController.destroy)
 router.patch('/:id/restore', meController.restore)
