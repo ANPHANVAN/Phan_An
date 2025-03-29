@@ -4,7 +4,6 @@
   "description": "create blog",
   "main": "src/app.js",
   "scripts": {
-    "beautiful": "prettier docs package.json '{src,__{tests,mocks}__}/**/*.{js,json,scss}' --write --single-quote --trailing-comma all",
     "watch": "sass --watch src/resource/scss/app.scss src/public/css/app.css",
     "start": "nodemon --inspect src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -26,11 +25,8 @@
     "mongoose-slug-generator": "^1.0.4"
   },
   "devDependencies": {
-    "husky": "^9.1.7",
-    "lint-staged": "^15.5.0",
     "morgan": "^1.10.0",
     "nodemon": "^3.1.9",
-    "prettier": "^3.5.3",
     "sass": "^1.86.0"
   }
 }
